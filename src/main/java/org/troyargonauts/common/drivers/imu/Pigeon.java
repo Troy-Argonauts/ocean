@@ -5,6 +5,8 @@ import com.ctre.phoenix.sensors.Pigeon2;
 public class Pigeon extends Pigeon2 {
     /**
      * Creates the Pigeon object with the specified CAN ID
+     *
+     * @param canID - the CAN ID of the Pigeon
      */
     private Pigeon(int canID) {
         super(canID);

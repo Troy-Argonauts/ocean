@@ -7,12 +7,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Limelight extends SubsystemBase {
 
     private NetworkTableInstance table = null;
-
     /**
      * There are 3 states that the Limelight's LEDs can be in:
-     * OFF - Turns off the Limelight's LEDs
-     * BLINK - Turns on the Limelight's LEDs and blinks them
-     * ON - Turns on the Limelight's LEDs
+     *
+     * <ul>
+     * <li> OFF - Turns off the Limelight's LEDs </li>
+     * <li> BLINK - Turns on the Limelight's LEDs and blinks them </li>
+     * <li> ON - Turns on the Limelight's LEDs </li>
+     * </ul>
      */
     public enum LightMode {
         ON, OFF, BLINK
@@ -20,8 +22,11 @@ public class Limelight extends SubsystemBase {
 
     /**
      * There are 2 states that the Limelight's Camera can be in:
-     * VISION - Turns on the Limelight's vision processing pipeline
-     * DRIVER - Turns on the Limelight's driver mode
+     *
+     * <ul>
+     * <li> VISION - Turns on the Limelight's vision processing pipeline </li>
+     * <li> DRIVER - Turns on the Limelight's driver mode </li>
+     * </ul>
      */
     public enum CameraMode {
         VISION, DRIVER
@@ -50,9 +55,12 @@ public class Limelight extends SubsystemBase {
 
     /**
      * Horizontal offset from crosshair to target (27 degrees to -27 degrees)
-     * 0 degrees means that the target is centered in the crosshair
-     * 27 degrees means that the target is all the way the right of the image.
-     * -27 degrees means that the target is all the way to the left of the image.
+     *
+     * <ul>
+     * <li> 0 degrees means that the target is centered in the crosshair </li>
+     * <li> 27 degrees means that the target is all the way the right of the image. </li>
+     * <li> -27 degrees means that the target is all the way to the left of the image. </li>
+     *</ul>
      *
      * @return the horizontal offset of the target relative to the crosshair
      */
@@ -62,9 +70,12 @@ public class Limelight extends SubsystemBase {
 
     /**
      * Vertixal offset from crosshair to target (20.5 degrees to -20.5 degrees)
-     * 0 degrees means that the target is centered in the crosshair
-     * 20.5 degrees means that the target is at the top of the image.
-     * -27 degrees means that the target is at the bottom to the left of the image.
+     *
+     * <ul>
+     * <li> 0 degrees means that the target is centered in the crosshair </li>
+     * <li> 20.5 degrees means that the target is at the top of the image. </li>
+     * <li> -20.5 degrees means that the target is at the bottom to the left of the image. </li>
+     *</ul>
      *
      * @return the vertical offset of the target relative to the crosshair
      */
@@ -82,7 +93,7 @@ public class Limelight extends SubsystemBase {
     }
 
     /**
-     * Gets target skew or rotation (-90 degrees to 0 degrees).
+     * Gets target skew or rotation (-90 degrees to 90 degrees).
      * The skew is the angle of the target relative to the crosshair.
      *
      * @return Target skew.
@@ -103,8 +114,7 @@ public class Limelight extends SubsystemBase {
     /**
      * Sets LED mode of Limelight.
      *
-     * @param mode
-     *            Light mode for Limelight.
+     * @param mode - Light mode for Limelight.
      */
     public void setLedMode(LightMode mode) {
         getValue("ledMode").setNumber(mode.ordinal());
@@ -113,8 +123,7 @@ public class Limelight extends SubsystemBase {
     /**
      * Sets camera mode for Limelight.
      *
-     * @param mode
-     *            Camera mode for Limelight.
+     * @param mode - Camera mode for Limelight.
      */
     public void setCameraMode(CameraMode mode) {
         getValue("camMode").setNumber(mode.ordinal());
@@ -123,8 +132,7 @@ public class Limelight extends SubsystemBase {
     /**
      * Sets pipeline number (0-9 value).
      *
-     * @param number
-     *            Pipeline number (0-9).
+     * @param number - Pipeline number (0-9).
      */
     public void setPipeline(int number) {
         getValue("pipeline").setNumber(number);
@@ -133,8 +141,7 @@ public class Limelight extends SubsystemBase {
     /**
      * Helper method to get an entry from the Limelight NetworkTable.
      *
-     * @param key
-     *            Key for entry.
+     * @param key - Key for entry.
      * @return NetworkTableEntry of given entry.
      */
     private NetworkTableEntry getValue(String key) {
