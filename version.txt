@@ -1,0 +1,3 @@
+versionMajor= 2023
+versionMinor= 1
+versionPatch= 1
