@@ -103,7 +103,6 @@ public class Controller extends Joystick {
 
 	public Button getDirection(Direction direction) {
 		return new Button() {
-			@Override
 			public boolean get() {
 				int dPadValue = getPOV();
 				return (dPadValue == direction.getValue()) || (dPadValue == (direction.getValue() + 45) % 360)
