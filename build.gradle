@@ -15,7 +15,8 @@ task increment {
     def (major, minor, patch) = v.tokenize('.')
     int newPatch = patch.toInteger() + 1
     String newVersion = major + "." + minor + "." + newPatch
-    String updatedVersion = buildFile.getText().replaceFirst("version='"+v+"'","version='"+newVersion+"'")
+    String updatedVersion = buildFile.getText().replaceFirst("version='"+v+"'","version='"+newVersion+"'");
+    version = newVersion
     buildFile.setText(updatedVersion)
 }
 
