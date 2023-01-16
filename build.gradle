@@ -8,18 +8,18 @@ plugins {
 }
 
 group='org.troyargonauts'
-version="2023.0.2"
+version=println(file("$projectDir/version.gradle").getProperties())
 
 task increment {
-    def v = buildFile.getText().find(version)
-    def (major, minor, patch) = v.tokenize('.')
-    int newPatch = patch.toInteger() + 1
-    String newVersion = major + "." + minor + "." + newPatch
-    String updatedVersion = buildFile.getText().replaceFirst("version='"+v+"'","version='"+newVersion+"'");
-    buildFile.setText(updatedVersion)
+    versionFile = file("$projectDir/version.gradle")
+    def patch = versionFile.getText().find(versionPatch)
+    int newPatch = patch + 1
+    String updatedPatch = versionFile.getText().replaceFirst("versionPatch='"+patch+"'","versionPatch='"+newPatch+"'");
+    versionFile.setText(updatedPatch)
 }
 
 publishing {
+
     publish.dependsOn increment
     repositories {
         maven {
