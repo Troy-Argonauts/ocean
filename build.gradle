@@ -1,4 +1,5 @@
 import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
+import org.gradle.api.GradleException
 
 plugins {
     id "java"
@@ -7,9 +8,19 @@ plugins {
 }
 
 group 'org.troyargonauts'
-version '0.0.1-ALPHA'
+version "2023.0.1"
+
+task increment {
+    def v = buildFile.getText().find(version)
+    def (major, minor, patch) = v.tokenize('.')
+    int newPatch = patch.toInteger() + 1
+    String newVersion = major + "." + minor + "." + newPatch
+    String updatedVersion = buildFile.getText().replaceFirst("version='"+v+"'","version='"+newVersion+"'")
+    buildFile.setText(updatedVersion)
+}
 
 publishing {
+    publish.dependsOn increment
     repositories {
         maven {
             name = "GitHubPackages"
