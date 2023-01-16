@@ -7,8 +7,8 @@ plugins {
     id 'maven-publish'
 }
 
-group 'org.troyargonauts'
-version "2023.0.1"
+group='org.troyargonauts'
+version="2023.0.2"
 
 task increment {
     def v = buildFile.getText().find(version)
@@ -16,7 +16,6 @@ task increment {
     int newPatch = patch.toInteger() + 1
     String newVersion = major + "." + minor + "." + newPatch
     String updatedVersion = buildFile.getText().replaceFirst("version='"+v+"'","version='"+newVersion+"'");
-    version = newVersion
     buildFile.setText(updatedVersion)
 }
 
