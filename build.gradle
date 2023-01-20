@@ -10,22 +10,21 @@ plugins {
 group='org.troyargonauts'
 version= "2023.0.1"
 
-task increment {
-    File versionFile = file("$projectDir/version.txt")
-
-    def patch = versionFile.getText().find(/(?<=versionPatch= )\d+/).toInteger()
-    def major = versionFile.getText().find(/(?<=versionMajor= )\d+/).toInteger()
-    def minor = versionFile.getText().find(/(?<=versionMinor= )\d+/).toInteger()
-
-    def newPatch = patch + 1
-    String updatedPatch = versionFile.getText().replaceFirst("versionPatch= "+patch+"","versionPatch= "+newPatch+"");
-    versionFile.setText(updatedPatch)
-    version = major + "." + minor + "." + newPatch
-    println(version)
-}
+//task increment {
+//    File versionFile = file("$projectDir/version.txt")
+//
+//    def patch = versionFile.getText().find(/(?<=versionPatch= )\d+/).toInteger()
+//    def major = versionFile.getText().find(/(?<=versionMajor= )\d+/).toInteger()
+//    def minor = versionFile.getText().find(/(?<=versionMinor= )\d+/).toInteger()
+//
+//    def newPatch = patch + 1
+//    String updatedPatch = versionFile.getText().replaceFirst("versionPatch= "+patch+"","versionPatch= "+newPatch+"");
+//    versionFile.setText(updatedPatch)
+//    version = major + "." + minor + "." + newPatch
+//    println(version)
+//}
 
 publishing {
-    //publish.dependsOn increment
     repositories {
         maven {
             name = "GitHubPackages"
