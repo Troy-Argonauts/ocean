@@ -28,8 +28,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Troy-Argonauts/ocean")
             credentials {
-                username = project.findProperty("gpr.user") ?: getUsername
-                password = project.findProperty("gpr.key") ?: getToken
+                username = System.getenv("GITHUB_ACTOR") ?: getUsername
+                password = System.getenv("GITHUB_TOKEN") ?: getToken
             }
         }
     }
