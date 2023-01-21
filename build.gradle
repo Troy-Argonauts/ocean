@@ -8,21 +8,19 @@ plugins {
 }
 
 group='org.troyargonauts'
-version= "2023.0.1"
+version= "2023.0.2"
 
-//task increment {
-//    File versionFile = file("$projectDir/version.txt")
-//
-//    def patch = versionFile.getText().find(/(?<=versionPatch= )\d+/).toInteger()
-//    def major = versionFile.getText().find(/(?<=versionMajor= )\d+/).toInteger()
-//    def minor = versionFile.getText().find(/(?<=versionMinor= )\d+/).toInteger()
-//
-//    def newPatch = patch + 1
-//    String updatedPatch = versionFile.getText().replaceFirst("versionPatch= "+patch+"","versionPatch= "+newPatch+"");
-//    versionFile.setText(updatedPatch)
-//    version = major + "." + minor + "." + newPatch
-//    println(version)
-//}
+task getToken {
+    File tokenFile = file("$projectDir/token.txt")
+    def token = tokenFile.getText().find(/(?<=token= ).+/)
+    return token;
+}
+
+task getUsername {
+    File usernameFile = file("$projectDir/token.txt")
+    def username = usernameFile.getText().find(/(?<=username= ).+/)
+    return username;
+}
 
 publishing {
     repositories {
@@ -30,8 +28,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Troy-Argonauts/ocean")
             credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") ?: getUsername
+                password = project.findProperty("gpr.key") ?: getToken
             }
         }
     }
