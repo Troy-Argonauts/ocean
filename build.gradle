@@ -10,7 +10,7 @@ plugins {
 group='org.troyargonauts'
 version= "2023.0.2"
 
-task getToken {
+tasks.register('getToken') {
     File tokenFile = file("$projectDir/token.txt")
     if (!tokenFile.exists()) {
         tokenFile.createNewFile();
@@ -20,7 +20,7 @@ task getToken {
     return token;
 }
 
-task getUsername {
+tasks.register('getUsername') {
     File usernameFile = file("$projectDir/token.txt")
     if (!usernameFile.exists()) {
         usernameFile.createNewFile();
