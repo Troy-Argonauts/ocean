@@ -4,7 +4,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,gradle,intellij+all,eclipse,netbeans,linux,macos,windows
 
 ### Eclipse ###
-token.txt
 .metadata
 bin/
 tmp/
@@ -322,3 +321,6 @@ bin/
 
 # End entries from WPI Lib team
 
+# Start entries from Argonauts
+
+token.txt
