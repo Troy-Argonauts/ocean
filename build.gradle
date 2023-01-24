@@ -12,13 +12,21 @@ version= "2023.0.2"
 
 task getToken {
     File tokenFile = file("$projectDir/token.txt")
+    if (!tokenFile.exists()) {
+        tokenFile.createNewFile();
+        tokenFile.write("token=")
+    }
     def token = tokenFile.getText().find(/(?<=token= ).+/)
     return token;
 }
 
 task getUsername {
     File usernameFile = file("$projectDir/token.txt")
-    def username = usernameFile.getText().find(/(?<=username= ).+/)
+    if (!usernameFile.exists()) {
+        usernameFile.createNewFile();
+        usernameFile.write("actor=")
+    }
+    def username = usernameFile.getText().find(/(?<=actor= ).+/)
     return username;
 }
 
