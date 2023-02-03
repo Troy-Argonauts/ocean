@@ -5,7 +5,7 @@ This is where all of our custom built libraries can be found!
 The libraries can also be used through our GitHub Package. 
 
 
-### TO use the package in your repository:
+### To use the package in your repository:
   1) Add the repository in the build.gradle file
   2) Fill in the token.txt with the correct values
   3) Run the code 
