@@ -1,17 +1,19 @@
-package org.troyargonauts.common.drivers.motorcontrol;
+package org.troyargonauts.common.control.motorcontrol;
+
+// Copyright 2019 FRC Team 3476 Code Orange
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 /**
  * Sends only new commands to the Talon to reduce CAN usage.
  */
-public class LazyTalonSRX extends WPI_TalonSRX {
+public class LazyTalonFX extends WPI_TalonFX {
 
 	private double prevValue = 0;
 	private final ControlMode prevControlMode = ControlMode.Disabled;
 
-	public LazyTalonSRX(int deviceNumber) {
+	public LazyTalonFX(int deviceNumber) {
 		super(deviceNumber);
 		enableVoltageCompensation(true);
 		configVoltageCompSaturation(12, 10);

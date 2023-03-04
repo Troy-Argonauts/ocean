@@ -1,4 +1,4 @@
-package org.troyargonauts.common.drivers.motorcontrol;
+package org.troyargonauts.common.control.motorcontrol;
 
 // Copyright 2019 FRC Team 3476 Code Orange
 
@@ -7,14 +7,14 @@ import com.revrobotics.CANSparkMax;
 /**
  * Sends only new commands to the Talon to reduce CAN usage.
  */
-public class ArgoSparkMax extends CANSparkMax {
+public class LazySparkMax extends CANSparkMax {
 
 	private final static double EPSILON = 1.0e-6;
 	private double prevValue = 0;
 	private double prevVoltage = 100;
 
 
-	public ArgoSparkMax(int deviceId, MotorType type) {
+	public LazySparkMax(int deviceId, MotorType type) {
 		super(deviceId, type);
 		enableVoltageCompensation(10);
 	}

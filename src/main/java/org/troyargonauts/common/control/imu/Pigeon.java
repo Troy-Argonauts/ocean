@@ -1,4 +1,4 @@
-package org.troyargonauts.common.drivers.imu;
+package org.troyargonauts.common.control.imu;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 

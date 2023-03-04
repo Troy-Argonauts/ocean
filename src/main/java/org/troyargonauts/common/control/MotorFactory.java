@@ -1,18 +1,16 @@
-package org.troyargonauts.common.controller;
+package org.troyargonauts.common.control;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.REVLibError;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.DriverStation;
-import org.troyargonauts.common.drivers.motorcontrol.ArgoSparkMax;
-import org.troyargonauts.common.drivers.motorcontrol.ArgoTalon;
-import org.troyargonauts.common.drivers.motorcontrol.LazyTalonSRX;
+import org.troyargonauts.common.control.motorcontrol.LazySparkMax;
+import org.troyargonauts.common.control.motorcontrol.LazyTalonFX;
+import org.troyargonauts.common.control.motorcontrol.LazyTalonSRX;
 
 public final class MotorFactory {
 
@@ -65,7 +63,7 @@ public final class MotorFactory {
 		}
 	};
 
-	public static ArgoSparkMax createDefaultSparkMax(int port) {
+	public static LazySparkMax createDefaultSparkMax(int port) {
 		return createSparkMax(port, DEFAULT_SPARK_CONFIG);
 	}
 
@@ -75,8 +73,8 @@ public final class MotorFactory {
 		}
 	}
 
-	public static ArgoSparkMax createSparkMax(final int port, final SparkConfiguration config) {
-		final ArgoSparkMax sparkMax = new ArgoSparkMax(port, CANSparkMax.MotorType.kBrushless);
+	public static LazySparkMax createSparkMax(final int port, final SparkConfiguration config) {
+		final LazySparkMax sparkMax = new LazySparkMax(port, CANSparkMax.MotorType.kBrushless);
 
 		handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, config.STATUS_FRAME_0_RATE_MS), "set status0 rate");
 		handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, config.STATUS_FRAME_1_RATE_MS), "set status1 rate");
@@ -250,8 +248,8 @@ public final class MotorFactory {
 
 
 
-	public static ArgoTalon createDefaultTalonFX(int canID, double rampRate) {
-		ArgoTalon motor = new ArgoTalon(canID);
+	public static LazyTalonFX createDefaultTalonFX(int canID, double rampRate) {
+		LazyTalonFX motor = new LazyTalonFX(canID);
 
 		motor.configFactoryDefault();
 		motor.setSensorPhase(false);

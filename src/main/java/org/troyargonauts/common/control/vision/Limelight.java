@@ -1,4 +1,4 @@
-package org.troyargonauts.common.drivers.vision;
+package org.troyargonauts.common.control.vision;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
