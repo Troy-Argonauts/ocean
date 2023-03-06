@@ -7,14 +7,14 @@ import com.revrobotics.CANSparkMax;
 /**
  * Sends only new commands to the Talon to reduce CAN usage.
  */
-public class LazySparkMax extends CANSparkMax {
+public class LazyCANSparkMax extends CANSparkMax {
 
 	private final static double EPSILON = 1.0e-6;
 	private double prevValue = 0;
 	private double prevVoltage = 100;
 
 
-	public LazySparkMax(int deviceId, MotorType type) {
+	public LazyCANSparkMax(int deviceId, MotorType type) {
 		super(deviceId, type);
 		enableVoltageCompensation(10);
 	}
