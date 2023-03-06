@@ -4,7 +4,7 @@
 
 package org.troyargonauts.common.network;
 
-import com.stuypulse.stuylib.streams.booleans.BStream;
+import org.troyargonauts.common.streams.booleans.BStream;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

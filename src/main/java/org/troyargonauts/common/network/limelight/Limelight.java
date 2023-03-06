@@ -4,8 +4,8 @@
 
 package org.troyargonauts.common.network.limelight;
 
-import com.stuypulse.stuylib.math.SLMath;
-import com.stuypulse.stuylib.math.Vector2D;
+import org.troyargonauts.common.math.OMath;
+import org.troyargonauts.common.math.Vector2D;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 
@@ -127,7 +127,7 @@ public final class Limelight {
     public double getTargetArea() {
         // Lime light returns a double from 0 - 100
         // Divide by 100 to scale number from 0 - 1
-        return SLMath.clamp(table.targetArea.get(0) / 100.0, 0, 1);
+        return OMath.clamp(table.targetArea.get(0) / 100.0, 0, 1);
     }
 
     /** @return Skew or rotation (-90 degrees to 0 degrees) */
@@ -229,7 +229,7 @@ public final class Limelight {
     public double getRawTargetArea(int target) {
         // Lime light returns a double from 0 - 100
         // Divide by 100 to scale number from 0 - 1
-        return SLMath.clamp(table.getGenericEntry("ta" + target).getDouble(0) / 100.0, 0, 1);
+        return OMath.clamp(table.getGenericEntry("ta" + target).getDouble(0) / 100.0, 0, 1);
     }
 
     /**

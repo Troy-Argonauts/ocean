@@ -12,7 +12,7 @@ import org.troyargonauts.common.util.AngleVelocity;
 /**
  * A positional feedforward controller for angular systems.
  *
- * @see com.stuypulse.stuylib.control.feedforward.PositionFeedforwardController
+ * @see org.troyargonauts.common.control.feedforward.PositionFeedforwardController
  * @author Myles Pasetsky (myles.pasetsky@gmail.com)
  */
 public class AnglePositionFeedforwardController extends AngleController {

@@ -4,7 +4,7 @@
 
 package org.troyargonauts.common.network;
 
-import com.stuypulse.stuylib.streams.IStream;
+import org.troyargonauts.common.streams.IStream;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

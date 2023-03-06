@@ -4,7 +4,7 @@
 
 package org.troyargonauts.common.network.limelight;
 
-import com.stuypulse.stuylib.math.Angle;
+import org.troyargonauts.common.math.Angle;
 
 /**
  * Class that is used to return solve 3D results from the limelight

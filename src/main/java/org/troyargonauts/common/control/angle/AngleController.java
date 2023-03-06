@@ -14,8 +14,8 @@ import org.troyargonauts.common.streams.filters.IFilter;
  *
  * <p>Other than this, works the same as the Controller class.
  *
- * @see com.stuypulse.stuylib.math.Angle
- * @see com.stuypulse.stuylib.control.Controller
+ * @see org.troyargonauts.common.math.Angle
+ * @see org.troyargonauts.common.control.Controller
  * @author Myles Pasetsky (myles.pasetsky@gmail.com)
  */
 public abstract class AngleController {

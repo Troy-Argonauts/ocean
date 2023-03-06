@@ -1,8 +1,8 @@
-package org.troyargonauts.common.util;
-
 /* Copyright (c) 2023 StuyPulse Robotics. All rights reserved. */
 /* This work is licensed under the terms of the MIT license */
 /* found in the root directory of this project. */
+
+package org.troyargonauts.common.util;
 
 /**
  * A class used to generate HashCodes by combining multiple different objects / types. The combining
