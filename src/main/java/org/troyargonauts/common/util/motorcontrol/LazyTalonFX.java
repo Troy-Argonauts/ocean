@@ -1,4 +1,4 @@
-package org.troyargonauts.common.control.motorcontrol;
+package org.troyargonauts.common.util.motorcontrol;
 
 // Copyright 2019 FRC Team 3476 Code Orange
 

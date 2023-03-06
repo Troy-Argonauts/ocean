@@ -5,7 +5,7 @@ package org.troyargonauts.common.math;
 /* found in the root directory of this project. */
 
 /**
- * SLMath (StuyLib Math) is a class containing many algorithms that are useful for developing robot
+ * OMath (StuyLib Math) is a class containing many algorithms that are useful for developing robot
  * code. Algorithms include limit, deadband, raising to powers while keeping the sign, and some
  * other new algorithms we came up with.
  *
