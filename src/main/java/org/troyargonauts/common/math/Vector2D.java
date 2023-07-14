@@ -84,12 +84,12 @@ public final class Vector2D {
      * @return the distance between the two Vector2Ds
      */
     public double distance(Vector2D other) {
-        return java.lang.Math.hypot(other.x - this.x, other.y - this.y);
+        return Math.hypot(other.x - this.x, other.y - this.y);
     }
 
     /** @return distance from 0, 0 */
     public double distance() {
-        return java.lang.Math.hypot(this.x, this.y);
+        return Math.hypot(this.x, this.y);
     }
 
     /** @return magnitude of the vector (same as distance from 0, 0) */

@@ -4,8 +4,8 @@
 
 package org.troyargonauts.common.streams.vectors;
 
-import org.troyargonauts.common.math.Vector2D;
 import edu.wpi.first.wpilibj.Notifier;
+import org.troyargonauts.common.math.Vector2D;
 
 /**
  * A PollingVStream is a VStream but its .get() method is called for you at a certain rate. This
