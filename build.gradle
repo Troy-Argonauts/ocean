@@ -8,7 +8,7 @@ plugins {
 }
 
 group='org.troyargonauts'
-version= "2023.0.5"
+version= "2023.0.6"
 
 tasks.register('getToken') {
     File tokenFile = file("$projectDir/token.txt")
