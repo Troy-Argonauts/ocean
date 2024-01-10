@@ -19,16 +19,16 @@ import org.troyargonauts.common.input.gamepads.AutoGamepad;
  */
 public class RobotContainer {
 
-    public static final Gamepad driver = new AutoGamepad(0);
-    public static final Gamepad operator = new AutoGamepad(1);
+    public static final Gamepad driver = new AutoGamepad(Constants.Controllers.DRIVER);
+    public static final Gamepad operator = new AutoGamepad(Constants.Controllers.OPERATOR);
 
     public RobotContainer() {
-        // Configure the trigger bindings
+        // Configure the button bindings
         configureBindings();
     }
 
     /**
-     * Use this method to define your trigger->command mappings.
+     * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
     }
