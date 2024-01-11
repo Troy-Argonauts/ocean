@@ -2,11 +2,13 @@ package org.troyargonauts.common.motors;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
@@ -110,7 +112,7 @@ public final class MotorCreation {
         public int FORWARD_SOFT_LIMIT;
         public int REVERSE_SOFT_LIMIT;
 
-        public boolean INVERTED;
+        public InvertedValue INVERTED;
         public boolean SENSOR_PHASE;
 
         public int CONTROL_FRAME_PERIOD_MS;
@@ -139,7 +141,7 @@ public final class MotorCreation {
             FORWARD_SOFT_LIMIT = 0;
             REVERSE_SOFT_LIMIT = 0;
 
-            INVERTED = false;
+            INVERTED = InvertedValue.CounterClockwise_Positive;
             SENSOR_PHASE = false;
 
             CONTROL_FRAME_PERIOD_MS = 10;
@@ -170,7 +172,7 @@ public final class MotorCreation {
             FORWARD_SOFT_LIMIT = 0;
             REVERSE_SOFT_LIMIT = 0;
 
-            INVERTED = false;
+            INVERTED = InvertedValue.CounterClockwise_Positive;
             SENSOR_PHASE = false;
 
             CONTROL_FRAME_PERIOD_MS = 10;
@@ -200,7 +202,7 @@ public final class MotorCreation {
             FORWARD_SOFT_LIMIT = 0;
             REVERSE_SOFT_LIMIT = 0;
 
-            INVERTED = false;
+            INVERTED = InvertedValue.CounterClockwise_Positive;
             SENSOR_PHASE = false;
 
             CONTROL_FRAME_PERIOD_MS = 5;
@@ -230,7 +232,7 @@ public final class MotorCreation {
             FORWARD_SOFT_LIMIT = 0;
             REVERSE_SOFT_LIMIT = 0;
 
-            INVERTED = false;
+            INVERTED = InvertedValue.CounterClockwise_Positive;
             SENSOR_PHASE = false;
 
             CONTROL_FRAME_PERIOD_MS = 10;
@@ -258,52 +260,52 @@ public final class MotorCreation {
         fxConfig.MotorOutput.PeakForwardDutyCycle = 1;
         fxConfig.MotorOutput.PeakReverseDutyCycle = -1;
 
-        talon.setNeutralMode(config.NEUTRAL_MODE);
+        fxConfig.MotorOutput.NeutralMode = config.NEUTRAL_MODE;
 
         fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = config.FORWARD_SOFT_LIMIT;
-        talon.configForwardSoftLimitEnable(config.ENABLE_SOFT_LIMIT, TIMEOUT_MS);
+        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = config.REVERSE_SOFT_LIMIT;
+        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = config.ENABLE_SOFT_LIMIT;
+        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = config.ENABLE_SOFT_LIMIT;
 
-        talon.configReverseSoftLimitThreshold(config.REVERSE_SOFT_LIMIT, TIMEOUT_MS);
-        talon.configReverseSoftLimitEnable(config.ENABLE_SOFT_LIMIT, TIMEOUT_MS);
-        talon.overrideSoftLimitsEnable(config.ENABLE_SOFT_LIMIT);
+        fxConfig.MotorOutput.Inverted = config.INVERTED;
 
-        talon.setInverted(config.INVERTED);
-        talon.setSensorPhase(config.SENSOR_PHASE);
+//        talon.setSensorPhase(config.SENSOR_PHASE);
 
-        talon.selectProfileSlot(0, 0);
+        SlotConfigs slotConfigs = new SlotConfigs();
+        slotConfigs.SlotNumber = 0;
 
-        talon.configVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD, TIMEOUT_MS);
-        talon.configVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW, TIMEOUT_MS);
+//        talon.configVelocityMeasurementPeriod(config.VELOCITY_MEASUREMENT_PERIOD, TIMEOUT_MS);
+//        talon.configVelocityMeasurementWindow(config.VELOCITY_MEASUREMENT_ROLLING_AVERAGE_WINDOW, TIMEOUT_MS);
 
-        talon.configOpenloopRamp(config.OPEN_LOOP_RAMP_RATE, TIMEOUT_MS);
-        talon.configClosedloopRamp(config.CLOSED_LOOP_RAMP_RATE, TIMEOUT_MS);
+        fxConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = config.OPEN_LOOP_RAMP_RATE;
+        fxConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = config.CLOSED_LOOP_RAMP_RATE;
 
-        talon.enableVoltageCompensation(false);
-        talon.configVoltageCompSaturation(0.0, TIMEOUT_MS);
-        talon.configVoltageMeasurementFilter(32, TIMEOUT_MS);
+        fxConfig.Voltage.SupplyVoltageTimeConstant = 32;
 
-        talon.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, TIMEOUT_MS);
 
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, config.GENERAL_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, config.FEEDBACK_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, config.QUAD_ENCODER_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, config.PULSE_WIDTH_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//        talon.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, TIMEOUT_MS);
+        fxConfig.Audio.BeepOnBoot = false;
 
-        talon.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS);
+//        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, config.GENERAL_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, config.FEEDBACK_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, config.QUAD_ENCODER_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, config.ANALOG_TEMP_VBAT_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, config.PULSE_WIDTH_STATUS_FRAME_RATE_MS, TIMEOUT_MS);
+//
+//        talon.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS);
     }
 
     public static LazyTalonFX<TalonFX> createDefaultTalonFX(final int canID) {
         TalonFX talon = new TalonFX(canID);
         configureTalon(talon, DEFAULT_TALON_CONFIG);
-        talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
+//        talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
         return new LazyTalonFX<>(talon);
     }
 
     public static LazyTalonFX<TalonFX> createTalonFX(final int canID, final TalonConfiguration configuration, final boolean isSlave) {
         TalonFX talon = new TalonFX(canID);
         configureTalon(talon, configuration);
-        talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
+//        talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
         return new LazyTalonFX<>(talon);
     }
 
