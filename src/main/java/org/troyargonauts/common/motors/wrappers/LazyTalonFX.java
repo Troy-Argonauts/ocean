@@ -1,9 +1,14 @@
 package org.troyargonauts.common.motors.wrappers;
 
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import org.troyargonauts.common.math.OMath;
@@ -12,7 +17,7 @@ import org.troyargonauts.common.util.Gains;
 import java.util.function.Supplier;
 
 @SuppressWarnings("HungarianNotationMemberVariables")
-public class LazyTalon<TalonType extends BaseTalon> implements MotorController<TalonType> {
+public class LazyTalonFX<TalonType extends TalonFX> implements MotorController<TalonType> {
 	private static final double Tau = 2 * Math.PI;
 
 	private static final int
@@ -24,7 +29,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 	private final boolean m_isEncoderPresent;
 	private double m_ticksPerRotation;
 
-	private ControlMode m_lastMode;
+	private ControlModeValue m_lastMode;
 	private DemandType m_lastDemandType;
 	private int m_selectedProfileID;
 	private double m_lastValue, m_lastDemand;
@@ -34,22 +39,15 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 	private boolean m_isMotionProfilingConfigured;
 	private MotorController<TalonType> m_leader;
 
-	protected LazyTalon(final TalonType talon, final boolean isSlave) {
+	protected LazyTalonFX(final TalonType talon, final boolean isSlave) {
 		m_internal = talon;
-		m_internal.enableVoltageCompensation(true);
-		runWithRetries(() -> m_internal.configVoltageCompSaturation(12.0, TIMEOUT_MS));
 
-		m_isFX = m_internal instanceof TalonFX;
+		m_isFX = m_internal != null;
 
 		m_name = "Talon" + (m_isFX ? "FX" : "SRX") + "-" + (isSlave ? "Slave-" : "") + m_internal.getDeviceID();
 
-		if (m_isFX) {
-			m_isEncoderPresent = true;
-			m_ticksPerRotation = 2048;
-		} else {
-			m_isEncoderPresent = new SensorCollection(m_internal).getPulseWidthRiseToRiseUs() != 0;
-			m_ticksPerRotation = 4096;
-		}
+		m_isEncoderPresent = true;
+		m_ticksPerRotation = 2048;
 
 		m_inverted = false;
 		m_selectedProfileID = 0;
@@ -61,7 +59,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 		m_lastDemand = Double.NaN;
 	}
 
-	public LazyTalon(final TalonType talon) {
+	public LazyTalonFX(final TalonType talon) {
 		this(talon,false);
 	}
 
@@ -72,17 +70,17 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public double getVoltageInput() {
-		return m_internal.getBusVoltage();
+		return m_internal.getSupplyVoltage().getValue();
 	}
 
 	@Override
 	public double getVoltageOutput() {
-		return m_internal.getMotorOutputVoltage();
+		return m_internal.getMotorVoltage().getValue();
 	}
 
 	@Override
 	public double getDrawnCurrentAmps() {
-		return m_internal.getStatorCurrent();
+		return m_internal.getStatorCurrent().getValue();
 	}
 
 	@Override
@@ -107,15 +105,14 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public synchronized boolean follow(final MotorController<TalonType> other, final boolean oppose) {
-		m_internal.setInverted(oppose ? InvertType.OpposeMaster : InvertType.FollowMaster);
-		m_internal.set(ControlMode.Follower, other.getDeviceID());
+		m_internal.setControl(new Follower(other.getDeviceID(), oppose));
 		m_leader = other;
 		return true;
 	}
 
-	private void set(final ControlMode mode, final double value, final DemandType demandType, final double demand) {
+	private void set(final ControlModeValue mode, final double value, final DemandType demandType, final double demand) {
 		if (mode != m_lastMode || value != m_lastValue || demandType != m_lastDemandType || demand != m_lastDemand) {
-			m_internal.set(mode, value, demandType, demand);
+			m_internal.set(value * 12);
 
 			m_lastMode = mode;
 			m_lastValue = value;
@@ -127,8 +124,8 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	public void set(final double value) {
 		if (value != m_lastValue) {
-			m_internal.set(ControlMode.PercentOutput, value);
-			m_lastMode = ControlMode.PercentOutput;
+			m_internal.setControl(new VoltageOut(value * 12));
+			m_lastMode = ControlModeValue.VoltageOut;
 			m_lastValue = value;
 
 			m_lastDemandType = null;
@@ -145,7 +142,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public boolean setNeutralBehaviour(final NeutralBehaviour mode) {
-		m_internal.setNeutralMode(mode == NeutralBehaviour.BRAKE ? NeutralMode.Brake : NeutralMode.Coast);
+		m_internal.setNeutralMode(mode == NeutralBehaviour.BRAKE ? NeutralModeValue.Brake : NeutralModeValue.Coast);
 		return true;
 	}
 
@@ -163,22 +160,22 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public synchronized boolean setEncoderCounts(final double position) {
-		return runWithRetries(() -> m_internal.setSelectedSensorPosition((int) position, m_selectedProfileID, TIMEOUT_MS));
+		return runWithRetries(() -> m_internal.setPosition((int) position, TIMEOUT_MS));
 	}
 
 	@Override
 	public synchronized boolean setOpenLoopVoltageRampRate(final double timeToRamp) {
-		return runWithRetries(() -> m_internal.configOpenloopRamp(timeToRamp, TIMEOUT_MS));
+		return runWithRetries(() -> m_internal.getConfigurator().apply((new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(timeToRamp)), TIMEOUT_MS));
 	}
 
 	@Override
 	public synchronized boolean setClosedLoopVoltageRampRate(final double timeToRamp) {
-		return runWithRetries(() -> m_internal.configClosedloopRamp(timeToRamp, TIMEOUT_MS));
+		return runWithRetries(() -> m_internal.getConfigurator().apply((new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(timeToRamp)), TIMEOUT_MS));
 	}
 
 	@Override
 	public void setNeutral() {
-		set(ControlMode.Disabled, 0.0, DemandType.ArbitraryFeedForward, 0.0);
+		set(ControlModeValue.DisabledOutput, 0.0, DemandType.ArbitraryFeedForward, 0.0);
 	}
 
 	@Override
@@ -188,12 +185,12 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public double getPositionRotations() {
-		return nativeUnits2Rotations(getInversionMultiplier() * m_internal.getSelectedSensorPosition(m_selectedProfileID));
+		return nativeUnits2Rotations(getInversionMultiplier() * m_internal.getPosition().getValue());
 	}
 
 	@Override
 	public double getMotorRotations() {
-		return (600 * m_internal.getSelectedSensorVelocity()) / m_ticksPerRotation;
+		return (600 * m_internal.getVelocity().getValue()) / m_ticksPerRotation;
 	}
 
 	@Override
@@ -203,7 +200,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public synchronized double getVelocityAngularRPM() {
-		return nativeUnits2RPM(getInversionMultiplier() * (int) m_internal.getSelectedSensorVelocity(m_selectedProfileID));
+		return nativeUnits2RPM(getInversionMultiplier() * (int) m_internal.getVelocity().getValueAsDouble());
 	}
 
 	@Override
@@ -215,19 +212,21 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 	@Override
 	public synchronized boolean setPIDF(final double p, final double i, final double d, final double ff, final double tolerance) {
 		boolean success = true;
+		SlotConfigs slotConfigs = new SlotConfigs();
+		slotConfigs.SlotNumber = m_selectedProfileID;
+		slotConfigs.kP = p;
+		slotConfigs.kI = i;
+		slotConfigs.kD = d;
+		slotConfigs.kS = ff;
 
-		success &= runWithRetries(() -> m_internal.config_kP(m_selectedProfileID, p, TIMEOUT_MS));
-		success &= runWithRetries(() -> m_internal.config_kI(m_selectedProfileID, i, TIMEOUT_MS));
-		success &= runWithRetries(() -> m_internal.config_kD(m_selectedProfileID, d, TIMEOUT_MS));
-		success &= runWithRetries(() -> m_internal.config_kF(m_selectedProfileID, ff, TIMEOUT_MS));
-		success &= runWithRetries(() -> m_internal.configAllowableClosedloopError(m_selectedProfileID, (int) tolerance, TIMEOUT_MS));
 
+		success = runWithRetries(() -> m_internal.getConfigurator().apply(slotConfigs));
 		return success;
 	}
 
 	@Override
 	public void setDutyCycle(final double cycle, final double feedforward) {
-		set(ControlMode.PercentOutput, cycle, DemandType.ArbitraryFeedForward, feedforward);
+		set(ControlModeValue.DutyCycleOut, cycle, DemandType.ArbitraryFeedForward, feedforward);
 	}
 
 	@Override
@@ -243,7 +242,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public void setVelocityRPM(final double rpm, final double feedforward) {
-		set(ControlMode.Velocity,
+		set(ControlModeValue.VelocityDutyCycle,
 				RPM2NativeUnitsPer100ms(rpm),
 				DemandType.ArbitraryFeedForward,
 				feedforward);
@@ -256,7 +255,7 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 
 	@Override
 	public synchronized void setPositionRotations(final double rotations, final double feedforward) {
-		set(m_isMotionProfilingConfigured ? ControlMode.MotionMagic : ControlMode.Position,
+		set(m_isMotionProfilingConfigured ? ControlModeValue.MotionMagicDutyCycle : ControlModeValue.DutyCycleOut,
 				getInversionMultiplier() * rotations2NativeUnits(rotations),
 				DemandType.ArbitraryFeedForward, feedforward);
 	}
@@ -267,20 +266,31 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 	}
 
 	public boolean setNominalOutputForward(final double percentOut) {
-		return runWithRetries(() -> m_internal.configNominalOutputForward(percentOut, TIMEOUT_MS));
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		config.MotorOutput.PeakForwardDutyCycle = 1;
+		config.MotorOutput.PeakReverseDutyCycle = percentOut;
+
+		return runWithRetries(() -> m_internal.getConfigurator().apply(config));
 	}
 
 	public boolean setNominalOutputReverse(final double percentOut) {
-		return runWithRetries(() -> m_internal.configNominalOutputReverse(percentOut, TIMEOUT_MS));
-	}
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		config.MotorOutput.PeakForwardDutyCycle = percentOut;
+		config.MotorOutput.PeakReverseDutyCycle = 0;
+
+		return runWithRetries(() -> m_internal.getConfigurator().apply(config));	}
 
 	public boolean setPeakOutputForward(final double percentOut) {
-		return runWithRetries(() -> m_internal.configPeakOutputForward(percentOut, TIMEOUT_MS));
-	}
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		config.MotorOutput.PeakForwardDutyCycle = percentOut;
+
+		return runWithRetries(() -> m_internal.getConfigurator().apply(config));	}
 
 	public boolean setPeakOutputReverse(final double percentOut) {
-		return runWithRetries(() -> m_internal.configPeakOutputReverse(percentOut, TIMEOUT_MS));
-	}
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		config.MotorOutput.PeakReverseDutyCycle = percentOut;
+
+		return runWithRetries(() -> m_internal.getConfigurator().apply(config));	}
 
 	public boolean setNominalOutputs(final double forward, final double reverse) {
 		boolean success = true;
@@ -332,13 +342,13 @@ public class LazyTalon<TalonType extends BaseTalon> implements MotorController<T
 		return (m_inverted && !m_isFX ? -1 : 1);
 	}
 
-	private synchronized boolean runWithRetries(final Supplier<ErrorCode> call) {
+	private synchronized boolean runWithRetries(final Supplier<StatusCode> call) {
 		boolean success;
 
 		int tries = 0;
 
 		do {
-			success = call.get() == ErrorCode.OK;
+			success = call.get() == StatusCode.OK;
 		} while (!success && tries++ < MAX_TRIES);
 
 		if (tries >= MAX_TRIES || !success) {

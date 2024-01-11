@@ -5,12 +5,13 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.REVLibError;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.troyargonauts.common.motors.wrappers.LazyCANSparkMax;
-import org.troyargonauts.common.motors.wrappers.LazyTalon;
+import org.troyargonauts.common.motors.wrappers.LazyTalonFX;
 
 public final class MotorCreation {
 
@@ -78,9 +79,9 @@ public final class MotorCreation {
     public static LazyCANSparkMax createSparkMax(final int port, final SparkConfiguration config) {
         final LazyCANSparkMax sparkMax = new LazyCANSparkMax(port, CANSparkMax.MotorType.kBrushless);
 
-        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, config.STATUS_FRAME_0_RATE_MS), "set status0 rate");
-        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, config.STATUS_FRAME_1_RATE_MS), "set status1 rate");
-        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, config.STATUS_FRAME_2_RATE_MS), "set status2 rate");
+        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, config.STATUS_FRAME_0_RATE_MS), "set status0 rate");
+        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus1, config.STATUS_FRAME_1_RATE_MS), "set status1 rate");
+        handleCANError(port, sparkMax.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus2, config.STATUS_FRAME_2_RATE_MS), "set status2 rate");
 
         handleCANError(port, sparkMax.setIdleMode(config.IDLE_MODE), "set neutral");
         sparkMax.setInverted(config.INVERTED);
@@ -97,7 +98,7 @@ public final class MotorCreation {
     }
 
     public static class TalonConfiguration {
-        public NeutralMode NEUTRAL_MODE;
+        public NeutralModeValue NEUTRAL_MODE;
         // factory default
         public double NEUTRAL_DEADBAND;
 
@@ -127,7 +128,7 @@ public final class MotorCreation {
 
     private static final TalonConfiguration DEFAULT_TALON_CONFIG = new TalonConfiguration() {
         {
-            NEUTRAL_MODE = NeutralMode.Coast;
+            NEUTRAL_MODE = NeutralModeValue.Coast;
             NEUTRAL_DEADBAND = 0.04;
 
             ENABLE_CURRENT_LIMIT = false;
@@ -158,7 +159,7 @@ public final class MotorCreation {
 
     private static final TalonConfiguration DRIVE_TALON = new TalonConfiguration() {
         {
-            NEUTRAL_MODE = NeutralMode.Brake;
+            NEUTRAL_MODE = NeutralModeValue.Brake;
             NEUTRAL_DEADBAND = 0.04;
 
             ENABLE_CURRENT_LIMIT = false;
@@ -188,7 +189,7 @@ public final class MotorCreation {
 
     public static final TalonConfiguration HIGH_PERFORMANCE_TALON_CONFIG = new TalonConfiguration() {
         {
-            NEUTRAL_MODE = NeutralMode.Coast;
+            NEUTRAL_MODE = NeutralModeValue.Coast;
             NEUTRAL_DEADBAND = 0.02;
 
             ENABLE_CURRENT_LIMIT = false;
@@ -218,7 +219,7 @@ public final class MotorCreation {
 
     private static final TalonConfiguration SLAVE_TALON_CONFIG = new TalonConfiguration() {
         {
-            NEUTRAL_MODE = NeutralMode.Coast;
+            NEUTRAL_MODE = NeutralModeValue.Coast;
             NEUTRAL_DEADBAND = 0.04;
 
             ENABLE_CURRENT_LIMIT = false;
@@ -247,7 +248,7 @@ public final class MotorCreation {
     };
 
     private static void configureTalon(final TalonFX talon, final TalonConfiguration config) {
-        talon.set(ControlMode.PercentOutput, 0.0);
+        talon.set(0.0);
 
         talon.clearStickyFaults(TIMEOUT_MS);
 
@@ -301,21 +302,21 @@ public final class MotorCreation {
         talon.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS);
     }
 
-    public static LazyTalon<TalonFX> createDefaultTalonFX(final int canID) {
+    public static LazyTalonFX<TalonFX> createDefaultTalonFX(final int canID) {
         TalonFX talon = new TalonFX(canID);
         configureTalon(talon, DEFAULT_TALON_CONFIG);
         talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
-        return new LazyTalon<>(talon);
+        return new LazyTalonFX<>(talon);
     }
 
-    public static LazyTalon<TalonFX> createTalonFX(final int canID, final TalonConfiguration configuration, final boolean isSlave) {
+    public static LazyTalonFX<TalonFX> createTalonFX(final int canID, final TalonConfiguration configuration, final boolean isSlave) {
         TalonFX talon = new TalonFX(canID);
         configureTalon(talon, configuration);
         talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, TIMEOUT_MS);
-        return new LazyTalon<>(talon);
+        return new LazyTalonFX<>(talon);
     }
 
-    public static LazyTalon<TalonFX> createDriveTalonFX(final int canID, final boolean isSlave) {
+    public static LazyTalonFX<TalonFX> createDriveTalonFX(final int canID, final boolean isSlave) {
         return createTalonFX(canID, DRIVE_TALON, isSlave);
     }
 }
