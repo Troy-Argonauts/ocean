@@ -2,9 +2,11 @@ package org.troyargonauts.common.motors;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
@@ -252,24 +254,13 @@ public final class MotorCreation {
 
         talon.clearStickyFaults(TIMEOUT_MS);
 
-        talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, TIMEOUT_MS);
-        talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled, TIMEOUT_MS);
-        talon.overrideLimitSwitchesEnable(config.ENABLE_LIMIT_SWITCH);
-
-        // Turn off re:zeroing by default.
-        talon.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, TIMEOUT_MS);
-        talon.configSetParameter(ParamEnum.eClearPositionOnLimitR, 0, 0, 0, TIMEOUT_MS);
-
-        talon.configNominalOutputForward(0, TIMEOUT_MS);
-        talon.configNominalOutputReverse(0, TIMEOUT_MS);
-        talon.configNeutralDeadband(config.NEUTRAL_DEADBAND, TIMEOUT_MS);
-
-        talon.configPeakOutputForward(1.0, TIMEOUT_MS);
-        talon.configPeakOutputReverse(-1.0, TIMEOUT_MS);
+        TalonFXConfiguration fxConfig = new TalonFXConfiguration();
+        fxConfig.MotorOutput.PeakForwardDutyCycle = 1;
+        fxConfig.MotorOutput.PeakReverseDutyCycle = -1;
 
         talon.setNeutralMode(config.NEUTRAL_MODE);
 
-        talon.configForwardSoftLimitThreshold(config.FORWARD_SOFT_LIMIT, TIMEOUT_MS);
+        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = config.FORWARD_SOFT_LIMIT;
         talon.configForwardSoftLimitEnable(config.ENABLE_SOFT_LIMIT, TIMEOUT_MS);
 
         talon.configReverseSoftLimitThreshold(config.REVERSE_SOFT_LIMIT, TIMEOUT_MS);
