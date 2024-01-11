@@ -31,6 +31,28 @@ public class RobotContainer {
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
+        //Example Joystick Input Command
+        //Pulled for Troy-Argonauts/Butters
+//            Robot.getDrivetrain().setDefaultCommand(
+//                    new RunCommand(
+//                            () -> {
+//                                double speed = IStream.create(driver::getLeftY)
+//                                        .filtered(x -> OMath.deadband(x, Constants.DriveTrain.DEADBAND))
+//                                        .get();
+//                                double angle = IStream.create(driver::getRightX)
+//                                        .filtered(x -> OMath.deadband(x, Constants.DriveTrain.DEADBAND))
+//                                        .get();
+//                                Robot.getDrivetrain().cheesyDrive(speed, angle, 1);
+//                            }, Robot.getDrivetrain()
+//                    )
+//            );
+
+        //Example Button Input Command
+        //Pulled for Troy-Argonauts/Butters
+//        driver.getRightBumper().whileTrue(
+//                new InstantCommand(() -> Robot.getDrivetrain().getDualSpeedTransmission().disableAutomaticShifting())
+//                        .andThen(new InstantCommand(() -> getDriver().setRumble(1.0, 0.5)))
+//        );
     }
 
     public static Gamepad getDriver() {
