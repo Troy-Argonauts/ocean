@@ -3,13 +3,13 @@ import org.gradle.api.GradleException
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.1.1"
+    id "edu.wpi.first.GradleRIO" version "2024.2.1"
     id 'maven-publish'
     id 'idea'
 }
 
 group='org.troyargonauts'
-version= "2024.0.1"
+version= "2024.0.3"
 
 tasks.register('getToken') {
     File tokenFile = file("$projectDir/token.txt")
